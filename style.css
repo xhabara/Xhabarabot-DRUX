@@ -5,3 +5,16 @@ html, body {
 canvas {
   display: block;
 }
+.autonomous-btn {
+  background-color: #3F51B5;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.randomize-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}

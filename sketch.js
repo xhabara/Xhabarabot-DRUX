@@ -9,7 +9,7 @@ let autonomousMode = false;
 
 // Preload drum sounds
 function preload() {
-  const drumNames = ["KEPALA.wav", "PERUT.wav", "KAKI.wav", "PAHA.wav"];
+  const drumNames = ["RullySahabaraSampleR1.wav", "RullySahabaraSampleR2.wav", "RullySahabaraSampleR3.wav", "RullySahabaraSampleR4.wav"];
   drumNames.forEach((name, idx) => drumSounds[idx] = loadSound(name));
 }
 

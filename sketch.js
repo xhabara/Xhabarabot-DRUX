@@ -4,10 +4,12 @@ let tempo = 120;
 const currentStep = [];
 let syncButton;
 let randomizeButton;
+let autonomousButton;
+let autonomousMode = false;
 
 // Preload drum sounds
 function preload() {
-  const drumNames = ["RullySahabaraSampleR2.wav", "RullySahabaraSampleR1.wav", "RullySahabaraSampleR4.wav", "RullySahabaraSampleR3.wav"];
+  const drumNames = ["RullySahabaraSampleR1.wav", "RullySahabaraSampleR2.wav", "RullySahabaraSampleR3.wav", "RullySahabaraSampleR4.wav"];
   drumNames.forEach((name, idx) => drumSounds[idx] = loadSound(name));
 }
 
@@ -18,10 +20,15 @@ function setup() {
   currentStep.push(...Array.from({ length: 4 }, () => 0));
 
   syncButton = new SyncButton();
-  randomizeButton = createButton('Randomize')
-    .position(width / 2 - 45, height * 0.65)
+  randomizeButton = createButton('Randomize Manually')
+    .position(width / 1.6 - 45, height * 0.58)
     .mousePressed(randomizeSequence)
     .addClass('randomize-btn');
+  
+  autonomousButton = createButton('Xhabarabot Mode')
+    .position(width / 30 + 60, height * 0.55)
+    .mousePressed(toggleAutonomousMode)
+    .addClass('autonomous-btn');
 }
 
 // Draw function
@@ -32,7 +39,7 @@ function draw() {
 
   textAlign(CENTER, CENTER);
   fill(255);
-  textSize(10);
+  textSize(3);
   text(`${tempo} BPM`, width * 0.07, height * 0.97);
 }
 
@@ -53,8 +60,7 @@ class Pad {
   constructor(soundIndex) {
     this.soundIndex = soundIndex;
     this.x = (width / 6) * (soundIndex + 1);
-this.y = height * 0.1;
-
+    this.y = height * 0.1;
     this.width = width / 7;
     this.height = height / 3;
     this.sequence = [this.soundIndex];
@@ -97,8 +103,7 @@ this.y = height * 0.1;
 class SyncButton {
   constructor() {
     this.x = width / 2 - 50;
-this.y = height * 0.8;
-
+    this.y = height * 0.8;
     this.width = 100;
     this.height = 30;
     this.isSynced = false;
@@ -108,33 +113,33 @@ this.y = height * 0.8;
     noStroke();
     fill(this.isSynced ? '#00ff00' : '#ff0000');
     rect(this.x, this.y, this.width, this.height, 7);
-textAlign(CENTER, CENTER);
-fill(25);
-textSize(15);
-text(this.isSynced ? 'CHANGE' : 'RETURN', this.x + this.width / 2, this.y + this.height / 2);
-}
+    textAlign(CENTER, CENTER);
+    fill(25);
+    textSize(10);
+    text(this.isSynced ? 'CHANGE' : 'RETURN', this.x + this.width / 2, this.y + this.height / 2);
+  }
 
-isClicked(x, y) {
-return x > this.x && x < this.x + this.width && y > this.y && y < this.y + this.height;
-}
+  isClicked(x, y) {
+    return x > this.x && x < this.x + this.width && y > this.y && y < this.y + this.height;
+  }
 
-toggleSync() {
-this.isSynced = !this.isSynced;
-pads.forEach(pad => pad.setSync(this.isSynced));
-}
+  toggleSync() {
+    this.isSynced = !this.isSynced;
+    pads.forEach(pad => pad.setSync(this.isSynced));
+  }
 }
 
 // Mouse click handling
 function mouseClicked() {
-pads.forEach(pad => {
-if (pad.isClicked(mouseX, mouseY)) {
-pad.isPlaying ? pad.stopLoop() : pad.startLoop();
-}
-});
+  pads.forEach(pad => {
+    if (pad.isClicked(mouseX, mouseY)) {
+      pad.isPlaying ? pad.stopLoop() : pad.startLoop();
+    }
+  });
 
-if (syncButton.isClicked(mouseX, mouseY)) {
-syncButton.toggleSync();
-}
+  if (syncButton.isClicked(mouseX, mouseY)) {
+    syncButton.toggleSync();
+  }
 }
 
 // Key press handling
@@ -157,9 +162,44 @@ function keyPressed() {
   }
 }
 
-
 // Change tempo function
 function changeTempo(newTempo) {
-tempo = constrain(newTempo, 30, 300);
+  tempo = constrain(newTempo, 30, 300);
 }
-   
+
+function toggleAutonomousMode() {
+  autonomousMode = !autonomousMode;
+  autonomousButton.html(autonomousMode ? 'Stop Xhabarabot Mode' : 'Xhabarabot Mode');
+  if (autonomousMode) {
+    randomizeButton.attribute('disabled', ''); // Disable randomize button
+  } else {
+    randomizeButton.removeAttribute('disabled'); // Enable randomize button
+  }
+  if (autonomousMode) {
+    autonomousBehavior();
+  }
+}
+
+function autonomousBehavior() {
+  if (!autonomousMode) return;
+
+  let randomPad = random(pads);
+  randomPad.isPlaying ? randomPad.stopLoop() : randomPad.startLoop();
+
+  // Randomly change tempo
+  if (random() < 0.2) {
+    changeTempo(tempo + random(-10, 10));
+  }
+
+  // Randomly synchronize
+  if (random() < 0.1) {
+    syncButton.toggleSync();
+  }
+
+  // Randomly randomize sequences
+  if (random() < 0.05) {
+    randomizeSequence();
+  }
+
+  setTimeout(autonomousBehavior, random(200, 1000)); // Adjust timing as desired
+}

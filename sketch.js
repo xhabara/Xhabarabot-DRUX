@@ -9,7 +9,7 @@ let autonomousMode = false;
 
 // Preload drum sounds
 function preload() {
-  const drumNames = ["RullySahabaraSampleR1.wav", "RullySahabaraSampleR2.wav", "RullySahabaraSampleR3.wav", "RullySahabaraSampleR4.wav"];
+  const drumNames = ["KEPALA.wav", "PERUT.wav", "KAKI.wav", "PAHA.wav"];
   drumNames.forEach((name, idx) => drumSounds[idx] = loadSound(name));
 }
 
@@ -21,12 +21,12 @@ function setup() {
 
   syncButton = new SyncButton();
   randomizeButton = createButton('Randomize Manually')
-    .position(width / 1.6 - 45, height * 0.58)
+    .position(width / 2.3 - 45, height * 0.68)
     .mousePressed(randomizeSequence)
     .addClass('randomize-btn');
   
   autonomousButton = createButton('Xhabarabot Mode')
-    .position(width / 30 + 60, height * 0.55)
+    .position(width / 4.5 + 60, height * 0.55)
     .mousePressed(toggleAutonomousMode)
     .addClass('autonomous-btn');
 }
